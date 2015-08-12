@@ -1,9 +1,10 @@
 {
   "name": "cycle-director",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A router driver for cycle.js based on director",
   "main": "lib/index.js",
   "scripts": {
+    "build": "mkdir -p lib/ && ./node_modules/.bin/babel src/index.js -o lib/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,5 +25,8 @@
   "dependencies": {
     "director": "^1.2.8",
     "rx": "^3.0.0"
+  },
+  "devDependencies": {
+    "babel": "^5.8.21"
   }
 }
