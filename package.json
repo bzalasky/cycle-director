@@ -1,0 +1,28 @@
+{
+  "name": "cycle-director",
+  "version": "0.1.0",
+  "description": "A router driver for cycle.js based on director",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tylors/cycle-director.git"
+  },
+  "keywords": [
+    "cycle",
+    "director",
+    "driver"
+  ],
+  "author": "Tylor Steinberger",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tylors/cycle-director/issues"
+  },
+  "homepage": "https://github.com/tylors/cycle-director#readme",
+  "dependencies": {
+    "director": "^1.2.8",
+    "rx": "^3.0.0"
+  }
+}
