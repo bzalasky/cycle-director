@@ -2,6 +2,12 @@
 
 This is a first attempt a making a router driver for [cycle.js](http://cycle.js.org) using [director](https://github.com/flatiron/director)
 
+# Install
+
+```
+npm install cycle-director
+```
+
 # Example
 
 ```
