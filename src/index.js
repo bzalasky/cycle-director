@@ -15,7 +15,7 @@ function hijackLinks(router) {
         .subscribe((event) => {
           event.preventDefault();
 
-          let currentRoute = getStartingURL(router);
+          let currentRoute = getCurrentUrl(router);
           let toRoute = event.target.href.replace(window.location.origin, '');
 
           if (toRoute !== currentRoute) {
@@ -27,27 +27,6 @@ function hijackLinks(router) {
           console.log('Complete');
         });
     })
-}
-
-function createRouter$(router) {
-
-  if (router.history) {
-
-    hijackLinks(router);
-
-    // Find a better way
-    return Rx.Observable.merge(
-      Rx.Observable.fromEvent(document.body, 'click')
-    )
-  }
-
-  return Rx.Observable.merge(
-    Rx.Observable.fromEvent(document, 'load'),
-    Rx.Observable.fromEvent(window, 'hashchange')
-  );
-
-
-
 }
 
 function getCurrentUrl(router) {
@@ -126,9 +105,15 @@ function makeRouterDriver(routerOptions) {
     () => {
       router.mount(routes);
       router.configure(routerOptions);
+      
       if (routerOptions.before) {
         routerOptions.before();
       }
+
+      if (router.history) {
+        hijackLinks(router);
+      }
+
       router.init(getCurrentUrl(router));
     });
 
@@ -136,6 +121,8 @@ function makeRouterDriver(routerOptions) {
     return subject;
   }
 }
+
+
 
 export default makeRouterDriver;
 export {makeRouterDriver};
