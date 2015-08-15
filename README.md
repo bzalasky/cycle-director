@@ -76,7 +76,7 @@ run(main, drivers);
 ### makeRouterDriver(options)
 
 ###### Arguments
-  options - options are all configuration options supported by [director](https://github.com/flatiron/director#routing-events)
+  options - options are all configuration options supported by [director](https://github.com/flatiron/director#configuration)
 
 ###### Return
 (Function) The Router Driver function. It expects an Observable of Route Objects as input, and outputs the path of the current route.
@@ -85,7 +85,7 @@ run(main, drivers);
 
 - url (required): path to mount routing events
 
-- optionally any [routing event](https://github.com/flatiron/director#configuration) director supports
+- optionally any [routing event](https://github.com/flatiron/director#routing-events) director supports
 
   ###### Example Route Object
   ```
