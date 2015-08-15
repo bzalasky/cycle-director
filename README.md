@@ -16,51 +16,41 @@ import {h, makeDOMDriver} from '@cycle/dom';
 
 import makeRouterDriver from 'cycle-director';
 
-let home_route = {
-  url: '/',
-  before: ()=>{console.log("Going home...")},
-  on: ()=>{console.log("Welcome home")},
-  after: ()=>{console.log("Leaving home...")},
-  view: () => {
-    return h('div', [
-             h('a', {href: '/'}, 'Home'),
-             h('a', {href:'/about'}, 'About'),
-             h('h1', 'Welcome Home')
-           ])
-  }
-}
-
-let about_route = {
-  url: "/about",
-  on: ()=>{console.log("About this page...")},
-  view: () => {
-    return h('div', [
-             h('a', {href: '/'}, 'Home'),
-             h('a', {href:'/about'}, 'About'),
-             h('h1', 'About me')
-           ])
-  }
-}
+let author = () => { return "author" };
+let books = () => { return "books"};
+let viewBook = (id) => {return "viewBook: bookId is populated: " + id};
+let viewChapter = (bookId, chapterNumber) => { return "BookId: " + bookId + " Chapter: " + chapterNumber} 
 
 let routes = [
-  home_route,
-  about_route
+  { url: "/author",  
+    on: author,
+    after: () => {confirm("You sure you want to leave this page?")}
+  },
+  { url: "/books", on: [books, () => { return "An inline route handler"}]},
+  { url: "/books/view/:bookId", on: viewBook},
+  { url: "/books/view/:bookId/chapter/:chapterNumber", on: viewChapter }
 ]
 
+function render(text) {
+  return h('div', [
+    h('ul', [
+      h('li', [h('a', {href: '#/author'}, 'Author')]),
+      h('li', [h('a', {href: '#/books'}, 'Books')]),
+      h('li', [h('a', {href: '#/books/view/33'}, 'Book 33')]),
+      h('li', [h('a', {href: '#/books/view/33/chapter/2'}, 'Book 33 Chapter 2')])
+    ]),
+    h ('h1', text)
+  ])
+}
 
 function main({DOM, Router}){
   let route$ = Rx.Observable.from(routes);
 
   let view$ = Router
-  .map((currentRoute) => {
-    let view;
-    routes.forEach((route) => {
-      if (route.url === currentRoute) {
-        view = route.view()
-      }
+    .map((output) => {
+      console.log("Output: " + output);
+      return render(output);
     })
-    return view
-  })
 
   return {
     DOM: view$,
@@ -72,7 +62,8 @@ function main({DOM, Router}){
 let drivers = {
   DOM: makeDOMDriver('.app'),
   Router: makeRouterDriver({
-    html5history: true // Remember to setup your server to handle this
+    html5history: false,
+    notfound: () => { return 'Page can not be found'}
   })
 };
 
