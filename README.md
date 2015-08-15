@@ -24,7 +24,9 @@ let viewChapter = (bookId, chapterNumber) => { return "BookId: " + bookId + " Ch
 let routes = [
   { url: "/author",  
     on: author,
-    after: () => {confirm("You sure you want to leave this page?")}
+    after: () => {if (!confirm("You sure you want to leave this page?")) {
+      window.location.hash = '#/author'
+    }}
   },
   { url: "/books", on: [books, () => { return "An inline route handler"}]},
   { url: "/books/view/:bookId", on: viewBook},
