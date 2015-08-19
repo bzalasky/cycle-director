@@ -10,7 +10,7 @@ npm install cycle-director
 
 # Example
 
-```
+```javascript
 import {run, Rx} from '@cycle/core';
 import {h, makeDOMDriver} from '@cycle/dom';
 
@@ -88,7 +88,7 @@ run(main, drivers);
 - optionally any [routing event](https://github.com/flatiron/director#routing-events) director supports
 
   ###### Example Route Object
-  ```
+  ```javascript
     {
       url: '/home', // required
       before: () => console.log('Going home...'), // optional
