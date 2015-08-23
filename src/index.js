@@ -1,4 +1,4 @@
-import Rx from 'rx';
+import {Rx} from '@cycle/core';
 import {Router} from 'director';
 
 
@@ -51,7 +51,7 @@ function wrapHandler(handler, subject) {
     }
   }
 
-  
+
 }
 
 
@@ -69,7 +69,7 @@ function addRoute(routes, route, subject) {
 function wrapOptionsMethods(routerOptions, subject) {
   if (routerOptions.notfound) {
       routerOptions.notfound = wrapHandler(routerOptions.notfound, subject);
-    } 
+    }
 
     if (routerOptions.on) {
       routerOptions.on = wrapHandler(routerOptions.on, subject);
@@ -105,7 +105,7 @@ function makeRouterDriver(routerOptions) {
     () => {
       router.mount(routes);
       router.configure(routerOptions);
-      
+
       if (routerOptions.before) {
         routerOptions.before();
       }
@@ -117,7 +117,7 @@ function makeRouterDriver(routerOptions) {
       router.init(getCurrentUrl(router));
     });
 
-    
+
     return subject;
   }
 }
