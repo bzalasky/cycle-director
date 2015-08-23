@@ -1,6 +1,6 @@
 {
   "name": "cycle-director",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A router driver for cycle.js based on director",
   "main": "lib/index.js",
   "scripts": {
