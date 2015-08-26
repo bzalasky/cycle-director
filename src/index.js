@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import Rx from 'rx';
 import {Router, http} from 'director';
+=======
+import {Rx} from '@cycle/core';
+import {Router} from 'director';
+>>>>>>> 2fd504b997eacc183ce7c40e03788407e48e5651
 
 
 function hijackLinks(router) {

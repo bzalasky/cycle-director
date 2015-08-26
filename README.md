@@ -10,7 +10,7 @@ npm install cycle-director
 
 # Client Example
 
-```
+```javascript
 import {run, Rx} from '@cycle/core';
 import {h, makeDOMDriver} from '@cycle/dom';
 
@@ -76,16 +76,14 @@ run(main, drivers);
 ### makeRouterDriver(options)
 
 ###### Arguments
-  options - options are all configuration options supported by [director](https://github.com/flatiron/director#routing-events)
+  options - options are all configuration options supported by [director](https://github.com/flatiron/director#configuration)
 
 ###### Return
 (Function) The Router Driver function. It expects an Observable of Route Objects as input, and outputs the path of the current route.
 
 ### Route Object
-
 - url (required): path to mount routing events
-
-- optionally any [routing event](https://github.com/flatiron/director#configuration) director supports
+- optionally any [routing event](https://github.com/flatiron/director#routing-events) director supports
 
 # Server Side Example
 ### Uses [cycle-http-server](https://github.com/tylors/cycle-http-server)
@@ -113,8 +111,6 @@ function main({Server, Router}) {
         res.writeHead(404);
         res.end(err.toString());
       }
-    }
-  })
 
   Router.get("/bonjour", helloWorld);
   Router.get("/hola/", helloWorld);
