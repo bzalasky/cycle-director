@@ -8,21 +8,21 @@ This is a first attempt a making a router driver for [cycle.js](http://cycle.js.
 npm install cycle-director
 ```
 
-# Example
+# Client Example
 
 ```
 import {run, Rx} from '@cycle/core';
 import {h, makeDOMDriver} from '@cycle/dom';
 
-import makeRouterDriver from 'cycle-director';
+import {makeClientDriver} from 'cycle-director';
 
 let author = () => { return "author" };
 let books = () => { return "books"};
 let viewBook = (id) => {return "viewBook: bookId is populated: " + id};
-let viewChapter = (bookId, chapterNumber) => { return "BookId: " + bookId + " Chapter: " + chapterNumber} 
+let viewChapter = (bookId, chapterNumber) => { return "BookId: " + bookId + " Chapter: " + chapterNumber}
 
 let routes = [
-  { url: "/author",  
+  { url: "/author",
     on: author,
     after: () => {if (!confirm("You sure you want to leave this page?")) {
       window.location.hash = '#/author'
@@ -87,14 +87,48 @@ run(main, drivers);
 
 - optionally any [routing event](https://github.com/flatiron/director#configuration) director supports
 
-  ###### Example Route Object
-  ```
-    {
-      url: '/home', // required
-      before: () => console.log('Going home...'), // optional
-      once: () => console.log('Never been here before'), // optional
-      on: () => console.log('Welcome home...'), // optional
-      after: () => console.log('Leaving home...') // optional
+# Server Side Example
+### Uses [cycle-http-server](https://github.com/tylors/cycle-http-server)
+```javascript
+import {run} from '@cycle/core';
+import {makeServerDriver} from 'cycle-http-server';
+import {makeHTTPDriver} from 'cycle-director';
+
+function helloWorld() {
+  this.res.writeHead(200, {'Content-Type': 'text/plain'});
+  this.res.end("Hello, world!");
+}
+
+let routes = {
+  "/hello": {
+    get: helloWorld
+  }
+};
+
+function main({Server, Router}) {
+
+  Server.subscribe( ({req, res}) => {
+    Router.dispatch(req, res, (err) => {
+      if (err) {
+        res.writeHead(404);
+        res.end(err.toString());
+      }
     }
-  ```
-- anything else: Its just a javascript object. Put whatever else you may need to complete your application. These are just the things that cycle-director will do something with.
+  })
+
+  Router.get("/bonjour", helloWorld);
+  Router.get("/hola/", helloWorld);
+
+  Server.listen(3000);
+}
+
+let drivers = {
+  // Takes routes and [configuration](https://github.com/flatiron/director#configuration)
+  Router: makeHTTPDriver(routes, {
+    strict: false
+  }),
+  Server: makeServerDriver()
+}
+
+run(main,drivers);
+```

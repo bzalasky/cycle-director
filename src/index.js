@@ -1,5 +1,5 @@
 import Rx from 'rx';
-import {Router} from 'director';
+import {Router, http} from 'director';
 
 
 function hijackLinks(router) {
@@ -51,7 +51,7 @@ function wrapHandler(handler, subject) {
     }
   }
 
-  
+
 }
 
 
@@ -66,10 +66,21 @@ function addRoute(routes, route, subject) {
 
 }
 
+function addServerRoute(routes, route) {
+  routes[route.url] = {
+    before: route.before,
+    on: route.on,
+    get: route.get,
+    post: route.post,
+    put: route.put,
+    delete: route.delete
+  };
+}
+
 function wrapOptionsMethods(routerOptions, subject) {
   if (routerOptions.notfound) {
       routerOptions.notfound = wrapHandler(routerOptions.notfound, subject);
-    } 
+    }
 
     if (routerOptions.on) {
       routerOptions.on = wrapHandler(routerOptions.on, subject);
@@ -84,7 +95,7 @@ function wrapOptionsMethods(routerOptions, subject) {
     }
 }
 
-function makeRouterDriver(routerOptions) {
+function makeClientDriver(routerOptions) {
 
   let router = new Router()
 
@@ -105,7 +116,7 @@ function makeRouterDriver(routerOptions) {
     () => {
       router.mount(routes);
       router.configure(routerOptions);
-      
+
       if (routerOptions.before) {
         routerOptions.before();
       }
@@ -117,12 +128,19 @@ function makeRouterDriver(routerOptions) {
       router.init(getCurrentUrl(router));
     });
 
-    
+
     return subject;
   }
 }
 
+function makeHTTPDriver(routes, routerOptions={}) {
+
+  let router = new http.Router(routes).configure(routerOptions);
+  return () => router;
+
+}
 
 
-export default makeRouterDriver;
-export {makeRouterDriver};
+
+export default makeClientDriver;
+export {makeClientDriver, makeHTTPDriver};
