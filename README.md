@@ -73,7 +73,7 @@ run(main, drivers);
 ```
 # API
 
-### makeRouterDriver(options)
+### makeClientDriver(options)
 
 ###### Arguments
   options - options are all configuration options supported by [director](https://github.com/flatiron/director#configuration)
