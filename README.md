@@ -63,7 +63,7 @@ function main({DOM, Router}){
 
 let drivers = {
   DOM: makeDOMDriver('.app'),
-  Router: makeRouterDriver({
+  Router: makeClientDriver({
     html5history: false,
     notfound: () => { return 'Page can not be found'}
   })
@@ -116,6 +116,8 @@ function main({Server, Router}) {
   Router.get("/hola/", helloWorld);
 
   Server.listen(3000);
+  
+  return {};
 }
 
 let drivers = {
