@@ -1,14 +1,7 @@
-<<<<<<< HEAD
 import Rx from 'rx';
 import {Router, http} from 'director';
-=======
-import {Rx} from '@cycle/core';
-import {Router} from 'director';
->>>>>>> 2fd504b997eacc183ce7c40e03788407e48e5651
-
 
 function hijackLinks(router) {
-
   // Binds to new links if they are rerendered
   // Or just once if they never change
   Rx.Observable.fromEvent(document.body, 'DOMNodeInserted')
@@ -16,7 +9,7 @@ function hijackLinks(router) {
     .subscribe((event) => {
       let links = document.querySelectorAll('a');
 
-        Rx.Observable.fromEvent(links, 'click')
+      Rx.Observable.fromEvent(links, 'click')
         .subscribe((event) => {
           event.preventDefault();
 
@@ -26,49 +19,43 @@ function hijackLinks(router) {
           if (toRoute !== currentRoute) {
             router.setRoute(event.target.href);
           }
-        },
-        (err) => console.log(err),
-        () => {
-          console.log('Complete');
-        });
-    })
+        }, (err) => console.log(err));
+    });
 }
 
 function getCurrentUrl(router) {
   let url;
+
   if (router.history) {
     url = window.location.pathname || "/";
+
   } else {
-    url = window.location.hash.replace('#', '') || '/'
+    url = window.location.hash.replace('#', '') || '/';
   }
+
   return url;
 }
 
 function wrapHandler(handler, subject) {
-
   return (...params) => {
     if (typeof handler === "function") {
       subject.onNext(handler(...params));
-    } else if (Array.isArray(handler)){
+
+    } else if (Array.isArray(handler)) {
       handler.forEach((h) => {
-        subject.onNext(h(...params))
-      })
+        subject.onNext(h(...params));
+      });
     }
-  }
-
-
+  };
 }
 
-
 function addRoute(routes, route, subject) {
-
   routes[route.url] = {
     once: wrapHandler(route.once, subject),
     before: wrapHandler(route.before, subject),
     on: wrapHandler(route.on, subject),
     after: wrapHandler(route.after, subject)
-  }
-
+  };
 }
 
 function addServerRoute(routes, route) {
@@ -84,68 +71,62 @@ function addServerRoute(routes, route) {
 
 function wrapOptionsMethods(routerOptions, subject) {
   if (routerOptions.notfound) {
-      routerOptions.notfound = wrapHandler(routerOptions.notfound, subject);
-    }
+    routerOptions.notfound = wrapHandler(routerOptions.notfound, subject);
+  }
 
-    if (routerOptions.on) {
-      routerOptions.on = wrapHandler(routerOptions.on, subject);
-    }
+  if (routerOptions.on) {
+    routerOptions.on = wrapHandler(routerOptions.on, subject);
+  }
 
-    if (routerOptions.before) {
-      routerOptions.before = wrapHandler(routerOptions.before, subject);
-    }
+  if (routerOptions.before) {
+    routerOptions.before = wrapHandler(routerOptions.before, subject);
+  }
 
-    if (routerOptions.after) {
-      routerOptions.after = wrapHandler(routerOptions.after, subject);
-    }
+  if (routerOptions.after) {
+    routerOptions.after = wrapHandler(routerOptions.after, subject);
+  }
 }
 
 function makeClientDriver(routerOptions) {
-
-  let router = new Router()
+  let router = new Router();
 
   return function(route$) {
     let subject = new Rx.Subject();
 
-    wrapOptionsMethods(routerOptions, subject)
+    wrapOptionsMethods(routerOptions, subject);
 
     let routes = {};
 
     route$.subscribe(
-    (route) => {
-      addRoute(routes, route, subject);
-    },
-    (err) => {
-      console.log(err);
-    },
-    () => {
-      router.mount(routes);
-      router.configure(routerOptions);
+      (route) => {
+        addRoute(routes, route, subject);
+      }, (err) => {
+        console.log(err);
+      }, () => {
+        router.mount(routes);
+        router.configure(routerOptions);
 
-      if (routerOptions.before) {
-        routerOptions.before();
-      }
+        if (routerOptions.before) {
+          routerOptions.before();
+        }
 
-      if (router.history) {
-        hijackLinks(router);
-      }
+        if (router.history) {
+          hijackLinks(router);
+        }
 
-      router.init(getCurrentUrl(router));
-    });
-
+        router.init(getCurrentUrl(router));
+      });
 
     return subject;
-  }
+  };
 }
 
-function makeHTTPDriver(routes, routerOptions={}) {
-
+function makeHTTPDriver(routes, routerOptions = {}) {
   let router = new http.Router(routes).configure(routerOptions);
+
   return () => router;
-
 }
-
-
 
 export default makeClientDriver;
+
 export {makeClientDriver, makeHTTPDriver};
