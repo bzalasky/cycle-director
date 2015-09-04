@@ -1,26 +1,22 @@
 import Rx from 'rx';
 import {Router, http} from 'director';
 
-function hijackLinks(router) {
-  // Binds to new links if they are rerendered
-  // Or just once if they never change
-  Rx.Observable.fromEvent(document.body, 'DOMNodeInserted')
-    .debounce(100)
-    .subscribe((event) => {
-      let links = document.querySelectorAll('a');
+function pushStateClick() {
+  return click(document)
+    .map((event) => {
+      event.preventDefault();
 
-      Rx.Observable.fromEvent(links, 'click')
-        .subscribe((event) => {
-          event.preventDefault();
+      return event.target;
+    })
+    .filter((el) => el.matches('a[href^="/"]'))
+    .subscribe((anchor) => {
+      let currentRoute = getCurrentUrl(router);
+      let toRoute = event.target.href.replace(window.location.origin, '');
 
-          let currentRoute = getCurrentUrl(router);
-          let toRoute = event.target.href.replace(window.location.origin, '');
-
-          if (toRoute !== currentRoute) {
-            router.setRoute(event.target.href);
-          }
-        }, (err) => console.log(err));
-    });
+      if (toRoute !== currentRoute) {
+        router.setRoute(event.target.href);
+      }
+    }, (err) => console.log(err));
 }
 
 function getCurrentUrl(router) {
@@ -92,16 +88,17 @@ function makeClientDriver(routerOptions) {
 
   return function(route$) {
     let subject = new Rx.Subject();
+    let routes = {};
 
     wrapOptionsMethods(routerOptions, subject);
-
-    let routes = {};
 
     route$.subscribe(
       (route) => {
         addRoute(routes, route, subject);
+
       }, (err) => {
         console.log(err);
+
       }, () => {
         router.mount(routes);
         router.configure(routerOptions);
@@ -111,7 +108,7 @@ function makeClientDriver(routerOptions) {
         }
 
         if (router.history) {
-          hijackLinks(router);
+          pushStateClick(router);
         }
 
         router.init(getCurrentUrl(router));
