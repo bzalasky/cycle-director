@@ -10,11 +10,11 @@ function pushStateClick() {
     })
     .filter((el) => el.matches('a[href^="/"]'))
     .subscribe((anchor) => {
-      let currentRoute = getCurrentUrl(router);
-      let toRoute = event.target.href.replace(window.location.origin, '');
+      let currentRoute = getCurrentUrl(anchor.href);
+      let toRoute = anchor.href.replace(window.location.origin, '');
 
       if (toRoute !== currentRoute) {
-        router.setRoute(event.target.href);
+        router.setRoute(anchor.href);
       }
     }, (err) => console.log(err));
 }
